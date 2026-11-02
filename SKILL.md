@@ -34,4 +34,6 @@ systemctl --user start ranger-embed trailblazer
 docker start ranger-qdrant
 ```
 
-Source: `~/projects/ranger`; changes go there and `install.sh` installs them. Never edit the installed copy by hand.
+Source: `~/projects/scout`. The Claude and agents skill directories link here; make Scout changes in this repository. Ranger imports the same retrieval interfaces and its installer copies the helpers from here.
+
+Run the local index tests with `python3 -m unittest discover -s ~/projects/scout/tests`. Check the shared graph with `trailblazer status --repo ~/projects/scout`; `pending_vectors: 0` means every indexed definition has an embedding.
