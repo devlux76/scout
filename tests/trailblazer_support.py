@@ -144,10 +144,6 @@ def matches(qualified, asked):
     return qualified == asked or qualified.split(".")[-1] == asked
 
 
-def exploding_sync(*args, **kwargs):
-    raise AssertionError("index.sync must not run when Trailblazer watches the repo")
-
-
 class FakeWaiter:
     """Stands in for the inotifywait process: stderr lines, then an exit code.
 

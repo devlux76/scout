@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Trailblazer over HTTP: ranger's candidates, when Trailblazer watches the repo.
+"""Trailblazer over HTTP: scout's and ranger's candidates, for a watched repo.
 
 Trailblazer keeps a definition graph and one vector per definition for every
-repository it watches, and it is always current. When it watches the repository
-ranger was asked about, its answers are used as they are, so ranger never
-builds or refreshes an index of its own.
+repository it watches, and it is always current. Its answers are used as they
+are; nothing here builds or refreshes an index.
 
 Nothing here raises. A missing endpoint file, a service that is not running, a
 timeout, a bad token or any non-2xx answer all come back as None, and the caller
-falls back to ranger's own index. The one answer worth telling apart is Trailblazer's
-own "this repository is not watched" (409), which is NOT_WATCHED rather than None.
+reports that Trailblazer cannot answer. The one answer worth telling apart is
+Trailblazer's own "this repository is not watched" (409), which is NOT_WATCHED
+rather than None.
 
     call(op, body, timeout=10)          any operation, decoded JSON or None
     watched(work_dir)                    the status dict, or None
@@ -41,8 +41,7 @@ STATE_DIR_ENV = "TRAILBLAZER_STATE_DIR"
 TIMEOUT = 10            # seconds per operation
 # A search embeds the question on the embedder Trailblazer's own indexing shares,
 # so it waits behind that queue: 12.3 s measured 2026-10-22 with 8,437 vectors
-# pending. Past the plain TIMEOUT that read as "no hits" and set ranger re-embedding
-# the whole repository into its own index on the same busy embedder. A backstop.
+# pending. Past the plain TIMEOUT that read as "no hits", so it is a backstop.
 SEARCH_TIMEOUT = 120
 MAX_HIT_CHARS = 1800    # keeps one definition inside the embedder's context, as index.py does
 MAX_USERS = 8           # users listed per definition, then "+N more"
@@ -177,7 +176,7 @@ def start_service():
 def ensure_watched(work_dir):
     """Trailblazer's status for this repository, as watched() gives it, after
     starting a stopped service and asking it to watch an unwatched repository.
-    None when it still cannot answer; the caller then uses ranger's own index."""
+    None when it still cannot answer; the caller then has no candidates."""
     body = {"repo": str(work_dir)}
     status = call("status", body)
     if status is None and start_service():
