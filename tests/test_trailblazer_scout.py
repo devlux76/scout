@@ -137,6 +137,7 @@ class CandidateSourceTests(TrailblazerTestCase):
             with self.assertRaises(SystemExit) as caught:
                 scout.main()
         self.assertEqual(caught.exception.code, 2)
+        self.assertIn("the index answered but found no candidate locations", err.getvalue())
 
     def test_candidates_with_source_names_which_source_answered(self):
         url, _server = self.serve()
